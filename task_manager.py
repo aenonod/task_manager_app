@@ -28,5 +28,15 @@ class TaskManager:
         with open(filename, "r") as file:
             json.dump([task.to_dict() for task in self.tasklist], file)
   
-# def to check the status of the tasks
+# def to check the tasks
+    def list_of_task(self):
+        for i, task in enumerate(self.tasklist):
+            status = "✅" if task.done else "❌"
+            print(f"[{status}] {1+1}. {task.taskname} - Priority: {self.priority}")
+            
 # def to mark task as done
+    def mark_task_as_done(self):
+        if 0 <= index < len(self.tasklist):
+            self.tasklist[index].to_mark_done()
+        else:
+            print("Invalid task number. Please try again.")
