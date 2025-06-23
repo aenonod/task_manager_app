@@ -19,6 +19,7 @@ class Task:
 # to turn task object into regular dictionary for easier saving of file (obj -> dict)
     def to_dict(self):
         return {
+            "type": "Task",
             "taskname": self.taskname,
             "deadline": self.deadline.strftime("%Y-%m-%d") if self.deadline else None,
             "category": self.category,
@@ -30,4 +31,7 @@ class Task:
     @staticmethod
     def from_dict(data):
         deadline = datetime.strptime(data["deadline"], "%Y-%m-%d") if data["deadline"] else None
-        return Task(data["taskname"], deadline, data["category"], data["priority"], data["done"])
+        if data.get("type") == "TimedTask":
+            return TimedTask(data["taskname"], deadline, data["category"], data["priority"], data["done"], data["duration"])
+        else:
+            return Task(data["taskname"], deadline, data["category"], data["priority"], data["done"])
