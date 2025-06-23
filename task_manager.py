@@ -17,7 +17,7 @@ class TaskManager:
         try:
             with open(filename, "r") as file:
                 data = json.load(file)
-                self.tasklist = [Task.from_dict(data) for d in data]
+                self.tasklist = [Task.from_dict(task) for task in data]
         except FileNotFoundError:
             self.tasklist = []
               
@@ -34,7 +34,10 @@ class TaskManager:
     def list_of_task(self):
         for i, task in enumerate(self.tasklist):
             status = "✅" if task.done else "❌"
-            print(f"[{status}] {i+1}. {task.taskname} - Priority: {task.priority}")
+            if isinstance(task, TimedTask):
+                print(f"[{status}] {i+1}. {task.taskname} - Priority: {task.priority} ({task.duration} hrs)")
+            else:
+                print(f"[{status}] {i+1}. {task.taskname} - Priority: {task.priority}")
             
 # def to mark task as done
     def mark_task_as_done(self, index):
