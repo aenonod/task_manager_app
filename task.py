@@ -30,6 +30,7 @@ class Task:
 # to return task into object (dict -> obj)
     @staticmethod
     def from_dict(data):
+        from timed_task import TimedTask
         deadline = datetime.strptime(data["deadline"], "%Y-%m-%d") if data["deadline"] else None
         if data.get("type") == "TimedTask":
             return TimedTask(data["taskname"], deadline, data["category"], data["priority"], data["done"], data["duration"])
