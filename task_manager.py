@@ -4,6 +4,8 @@
 import json
 # import task from task.py
 from task import Task
+# import timedtask from timed_task.py
+from timed_task import TimedTask
 
 class TaskManager:
 # def for constructor to initialize empty task list
@@ -15,7 +17,7 @@ class TaskManager:
         try:
             with open(filename, "r") as file:
                 data = json.load(file)
-                self.tasklist = [Task.from_dict(task) for task in data]
+                self.tasklist = [Task.from_dict(data) for d in data]
         except FileNotFoundError:
             self.tasklist = []
               
