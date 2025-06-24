@@ -13,9 +13,6 @@ from app_menu import AppMenu
 # import tkinter
 import tkinter as tk
 
-task_manager = TaskManager()
-task_manager.load_file()
-
 # create a window
 window = tk.Tk()
 window.title("TASKMATE")
@@ -23,6 +20,22 @@ window.geometry("800x600")
 icon = tk.PhotoImage(file='cool_logo.png')
 window.iconphoto(True, icon)
 window.config(background="#A095A7")
+
+task_manager = TaskManager()
+task_manager.load_file()
+
+# create frames
+main_frame = tk.Frame(window, bg="#A095A7")
+add_task_frame = tk.Frame(window, bg="#A095A7")
+view_task_frame = tk.Frame(window, bg="#A095A7")
+meet_dev_frame = tk.Frame(window, bg="#A095A7")
+
+for frame in (main_frame, add_task_frame, view_task_frame, meet_dev_frame):
+    frame.place(relwidth=1, relheight=1)
+    
+# switch frames
+def switch_frame(frame):
+    frame.tkraise()
 
 # create frame 1 for main menu
 # sub welcome message: "What do you want to do?"
@@ -71,7 +84,7 @@ meet_dev_button = tk.Button(window,
 meet_dev_button.config(command=menu.meet_the_dev)
 meet_dev_button.place(relx=0.5, y=410,anchor="center")
 
-window.mainloop()
+window.mainloop() 
 
 # create frame 2 to add task
 # create frame 3 for task list
