@@ -58,7 +58,7 @@ def render_main_menu():
     # button 2: view task list
     view_task_button = tk.Button(main_frame, text="View List of Tasks", font=('Arial', 13),
                         fg="#000000", bg="#E5DBF3", padx=15, pady=10)
-    view_task_button.config(command=lambda: switch_frame(view_task_frame))
+    view_task_button.config(command=lambda: [render_view_task(), switch_frame(view_task_frame)])
     view_task_button.place(relx=0.5, y=345,anchor="center")
     # button 3: meet the dev
     meet_dev_button = tk.Button(main_frame, text="Meet the Developer", font=('Arial', 13),
@@ -148,7 +148,15 @@ def render_add_task():
         category = category_var.get()
         priority = priority_var.get()
 
-        task = Task(name, deadline, category, priority)
+        if timed_var.get() == "Yes":
+            try:
+                duration = int(duration_entry.get())
+                task = TimedTask(name, deadline, category, priority, False, duration)
+            except ValueError:
+                messagebox.showerror("Invalid Input", "Duration must be a number.")
+                return
+        else:
+            task = Task(name, deadline, category, priority)
         task_manager.add_task_to_list(task)
         task_manager.save_to_file()
         messagebox.showinfo("Success", f"'{name}' has been added!")
@@ -157,16 +165,71 @@ def render_add_task():
     submit_button = tk.Button(add_task_frame, text="Submit Task", font=('Arial', 13), bg="#E5DBF3",
                               command=submit_task)
     submit_button.place(relx=0.3, y=500, anchor="center")
-
-    back_button = tk.Button(add_task_frame, text="Back", font=('Arial', 12), bg="#D3CCE3",
+    back_button = tk.Button(add_task_frame, text="Back", font=('Arial', 12), bg="#E5DBF3",
                             command=lambda: switch_frame(main_frame))
     back_button.place(relx=0.7, y=500, anchor="center")
-    
+
+# create frame 3 for task list
+def render_view_task():
+    for widget in view_task_frame.winfo_children():
+        widget.destroy()
+
+    header_label = tk.Label(view_task_frame, text="Your Task List",
+                            font=('Century Gothic', 30), fg="#000000", bg="#A095A7")
+    header_label.place(relx=0.5, y=70, anchor="center")
+
+    # Scrollable canvas area
+    task_canvas = tk.Canvas(view_task_frame, bg="#A095A7", highlightthickness=0)
+    task_canvas.place(relx=0.05, rely=0.2, relwidth=0.85, relheight=0.6)
+
+    scrollbar = tk.Scrollbar(view_task_frame, orient="vertical", command=task_canvas.yview)
+    scrollbar.place(relx=0.9, rely=0.2, relheight=0.6)
+
+    task_container = tk.Frame(task_canvas, bg="#A095A7")
+    task_container.bind("<Configure>", lambda e: task_canvas.configure(scrollregion=task_canvas.bbox("all")))
+
+    task_canvas.create_window((0, 0), window=task_container, anchor="nw")
+    task_canvas.configure(yscrollcommand=scrollbar.set)
+
+    # Store checkboxes and vars
+    checkbox_vars = []
+
+    for task in task_manager.tasklist:
+        var = tk.BooleanVar(value=task.done)
+        deadline_str = task.deadline.strftime("%Y-%m-%d") if task.deadline else "No deadline"
+    # Check if TimedTask
+        if isinstance(task, TimedTask):
+            display_text = f"""{task.taskname} - {task.priority}  |  {task.category}  |  {deadline_str}  |  {task.duration} hrs"""
+        else:
+            display_text = f"""{task.taskname} - {task.priority}  |  {task.category}  |  {deadline_str}"""
+
+        chk = tk.Checkbutton(task_container,
+                            text=display_text,
+                            variable=var,
+                            bg="#A095A7",
+                            font=('Arial', 12),
+                            anchor="w")
+        chk.pack(fill="x", padx=10, pady=5)
+        checkbox_vars.append((task, var))
+
+    # Apply button
+    def apply_done_changes():
+        for task, var in checkbox_vars:
+            task.done = var.get()
+        task_manager.save_to_file()
+        tk.messagebox.showinfo("Saved", "Changes applied!")
+
+    apply_button = tk.Button(view_task_frame, text="Apply Changes", font=('Arial', 13),
+                             bg="#E5DBF3", command=apply_done_changes)
+    apply_button.place(relx=0.3, y=500, anchor="center")
+    back_button = tk.Button(view_task_frame, text="Back", font=('Arial', 12), bg="#E5DBF3",
+                            command=lambda: switch_frame(main_frame))
+    back_button.place(relx=0.7, y=500, anchor="center")
+
+# create frame 4 to meet the dev
 
 render_main_menu()
 render_add_task()
+render_view_task()
 switch_frame(main_frame)
 window.mainloop() 
-
-# create frame 3 for task list
-# create frame 4 to meet the dev
