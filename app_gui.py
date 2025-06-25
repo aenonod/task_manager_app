@@ -18,6 +18,7 @@ from tkinter import messagebox
 window = tk.Tk()
 window.title("TASKMATE")
 window.geometry("600x600")
+window.resizable(False, False)
 icon = tk.PhotoImage(file='cool_logo.png')
 window.iconphoto(True, icon)
 window.config(background="#A095A7")
@@ -227,9 +228,29 @@ def render_view_task():
     back_button.place(relx=0.7, y=500, anchor="center")
 
 # create frame 4 to meet the dev
+def render_meet_dev():
+    header_label = tk.Label(meet_dev_frame, text="Meet the Developer! 💻",
+                            font=('Century Gothic', 30), fg="#000000", bg="#A095A7")
+    header_label.place(relx=0.5, y=70, anchor="center")
+    
+    back_button = tk.Button(meet_dev_frame, text="Back", font=('Arial', 15), bg="#E5DBF3",
+                            command=lambda: switch_frame(main_frame))
+    back_button.place(relx=0.8, y=550, anchor="center")
+    
+    text_box = tk.Text(meet_dev_frame, wrap="word",
+                       font=("Arial", 13), fg="#000000", bg="#A095A7",
+                       highlightthickness=0, relief="flat")
+    text_box.pack(padx=40, pady=30)
+    
+    menu = AppMenu()
+    dev_bio = menu.meet_the_dev()
+    text_box.insert("1.0", dev_bio)
+    text_box.config(state="disabled")
+    text_box.place(relx=0.5, rely=0.5, anchor="center", width=500, height=300)
 
 render_main_menu()
 render_add_task()
 render_view_task()
+render_meet_dev()
 switch_frame(main_frame)
 window.mainloop() 
