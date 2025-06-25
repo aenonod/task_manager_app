@@ -19,20 +19,23 @@ class Task:
 # to turn task object into regular dictionary for easier saving of file (obj -> dict)
     def to_dict(self):
         return {
-            "type": "Task",
             "taskname": self.taskname,
             "deadline": self.deadline.strftime("%Y-%m-%d") if self.deadline else None,
             "category": self.category,
-            "priority": self. priority,
-            "done": self.done
+            "priority": self.priority,
+            "done": self.done,
+            "type": "Task"
         }
 
 # to return task into object (dict -> obj)
     @staticmethod
     def from_dict(data):
-        from timed_task import TimedTask
-        deadline = datetime.strptime(data["deadline"], "%Y-%m-%d") if data["deadline"] else None
-        if data.get("type") == "TimedTask":
-            return TimedTask(data["taskname"], deadline, data["category"], data["priority"], data["done"], data["duration"])
-        else:
-            return Task(data["taskname"], deadline, data["category"], data["priority"], data["done"])
+        deadline_str = data.get("deadline")
+        deadline = datetime.strptime(deadline_str, "%Y-%m-%d") if deadline_str else None
+        return Task(
+            data["taskname"],
+            deadline,
+            data.get("category"),
+            data.get("priority"),
+            data.get("done", False)
+        )
