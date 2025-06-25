@@ -2,6 +2,8 @@
 
 # import task from task.py
 from task import Task
+# import datetime module
+from datetime import datetime
 
 class TimedTask(Task):
 # def to initialize previous objects with additional info
@@ -14,4 +16,19 @@ class TimedTask(Task):
         data = super().to_dict()
         data["type"] = "TimedTask"
         data["duration"] = self.duration
+        if isinstance(self.deadline, datetime):
+            data["deadline"] = self.deadline.strftime("%Y-%m-%d")
         return data
+
+    @staticmethod
+    def from_dict(data):
+        deadline_str = data.get("deadline")
+        deadline = datetime.strptime(deadline_str, "%Y-%m-%d") if deadline_str else None
+        return TimedTask(
+            data["taskname"],
+            deadline,
+            data.get("category"),
+            data.get("priority"),
+            data.get("done", False),
+            data.get("duration", 0)
+        )
