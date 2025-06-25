@@ -17,7 +17,11 @@ class TaskManager:
         try:
             with open(filename, "r") as file:
                 data = json.load(file)
-                self.tasklist = [Task.from_dict(task) for task in data]
+                for task in data:
+                    if task.get("type") == "TimedTask":
+                        self.tasklist.append(TimedTask.from_dict(task))
+                    else:
+                        self.tasklist.append(Task.from_dict(task))
         except FileNotFoundError:
             self.tasklist = []
               
@@ -30,18 +34,14 @@ class TaskManager:
         with open(filename, "w") as file:
             json.dump([task.to_dict() for task in self.tasklist], file)
   
+  
 # def to check the tasks
     def list_of_task(self):
-        for i, task in enumerate(self.tasklist):
-            status = "✅" if task.done else "❌"
-            if isinstance(task, TimedTask):
-                print(f"[{status}] {i+1}. {task.taskname} - Priority: {task.priority} ({task.duration} hrs)")
-            else:
-                print(f"[{status}] {i+1}. {task.taskname} - Priority: {task.priority}")
+        return self.tasklist
             
 # def to mark task as done
     def mark_task_as_done(self, index):
         if 0 <= index < len(self.tasklist):
             self.tasklist[index].to_mark_done()
-        else:
-            print("Invalid task number. Please try again.")
+            return True
+        return False
