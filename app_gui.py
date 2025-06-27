@@ -248,9 +248,10 @@ def render_meet_dev():
     text_box.config(state="disabled")
     text_box.place(relx=0.5, rely=0.5, anchor="center", width=500, height=300)
 
-render_main_menu()
-render_add_task()
-render_view_task()
-render_meet_dev()
-switch_frame(main_frame)
-window.mainloop() 
+def run_app():
+    render_main_menu()
+    render_add_task()
+    render_view_task()
+    render_meet_dev()
+    switch_frame(main_frame)
+    window.mainloop() 
